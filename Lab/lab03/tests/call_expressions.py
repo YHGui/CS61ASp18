@@ -14,11 +14,10 @@ test = {
           >>> def f(z):
           ...     add(square(double(z)), 1)
           >>> f(4)
-          fef9a0b77f7c83478c249aedcc62186d
-          # locked
+          Nothing
           """,
           'hidden': False,
-          'locked': True
+          'locked': False
         },
         {
           'code': r"""
@@ -26,22 +25,18 @@ test = {
           ...     print("x or y")
           ...     return x or y
           >>> a = foo
-          fef9a0b77f7c83478c249aedcc62186d
-          # locked
+          Nothing
           >>> b = foo()
-          9ee30c0bb2642a554fb2198e3b73feb1
-          # locked
+          Error
           >>> c = a(print("x"), print("y"))
-          ff318045874bb7f788b2309eaa0f4894
-          da02dee03c156475c7c29393dacfc3f5
-          7ddbdb50919b472a75075471bd5596e5
-          # locked
+          x
+          y
+          x or y
           >>> print(c)
-          399369abd1b48a38479bd1bfa475106f
-          # locked
+          None
           """,
           'hidden': False,
-          'locked': True
+          'locked': False
         },
         {
           'code': r"""
@@ -52,13 +47,12 @@ test = {
           ...     print('cs61a')
           ...     return 'world'
           >>> print(welcome(), cs61a())
-          204ec822686298ee05e57f3c0b56b819
-          0f528d2547869677927cf019eefdf1e0
-          1047f769134a5d283d048fc7f113428e
-          # locked
+          welcome to
+          cs61a
+          hello world
           """,
           'hidden': False,
-          'locked': True
+          'locked': False
         }
       ],
       'scored': False,
