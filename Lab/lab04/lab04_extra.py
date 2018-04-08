@@ -15,7 +15,15 @@ def flatten(lst):
     >>> flatten(x)
     [1, 1, 1, 1, 1, 1]
     """
-    "*** YOUR CODE HERE ***"
+    def flatten_helper(lst, result):
+        for element in lst:
+            if type(element) == list:
+                flatten_helper(element, result)
+            else:
+                result.append(element)
+        return result
+            
+    return flatten_helper(lst, [])
 
 # Q7
 def merge(lst1, lst2):
@@ -30,7 +38,24 @@ def merge(lst1, lst2):
     >>> merge([5, 7], [2, 4, 6])
     [2, 4, 5, 6, 7]
     """
-    "*** YOUR CODE HERE ***"
+    index1, index2 = 0, 0
+    result = []
+    len1, len2 = len(lst1), len(lst2)
+    while index1 < len1 and index2 < len2:
+        if lst1[index1] < lst2[index2]:
+            result.append(lst1[index1])
+            index1 += 1
+        else:
+            result.append(lst2[index2])
+            index2 += 1
+
+    if index1 + 1 <= len1:
+        result += lst1[index1:]
+
+    if index2 + 1 <= len2:
+        result += lst2[index2:]
+    
+    return result
 
 ######################
 ### Connect N Game ###
@@ -43,8 +68,7 @@ def create_row(size):
     >>> create_row(5)
     ['-', '-', '-', '-', '-']
     """
-    "*** YOUR CODE HERE ***"
-
+    return ['-' for i in range(size)]
 
 def create_board(rows, columns):
     """Returns a board with the given dimensions.
@@ -52,7 +76,7 @@ def create_board(rows, columns):
     >>> create_board(3, 5)
     [['-', '-', '-', '-', '-'], ['-', '-', '-', '-', '-'], ['-', '-', '-', '-', '-']]
     """
-    "*** YOUR CODE HERE ***"
+    return [create_row(columns) for j in range(rows)]
 
 
 def replace_elem(lst, index, elem):
@@ -67,8 +91,9 @@ def replace_elem(lst, index, elem):
     False
     """
     assert index >= 0 and index < len(lst), 'Index is out of bounds'
-    "*** YOUR CODE HERE ***"
-
+    new = list(lst)
+    new[index] = elem
+    return new
 
 def get_piece(board, row, column):
     """Returns the piece at location (row, column) in the board.
@@ -82,8 +107,7 @@ def get_piece(board, row, column):
     >>> get_piece(board, 1, 1)
     '-'
     """
-    "*** YOUR CODE HERE ***"
-
+    return board[row][column]
 
 def put_piece(board, max_rows, column, player):
     """Puts PLAYER's piece in the bottommost empty spot in the given column of
@@ -105,8 +129,14 @@ def put_piece(board, max_rows, column, player):
     >>> row
     -1
     """
-    "*** YOUR CODE HERE ***"
-
+    curr_index_row = max_rows - 1
+    while curr_index_row >= 0 and get_piece(board,curr_index_row, column) != '-':
+        curr_index_row -= 1
+    if curr_index_row >= 0:
+        new_row = replace_elem(board[curr_index_row], column, player)
+        new_board = replace_elem(board, curr_index_row, new_row)
+        board = new_board
+    return curr_index_row, board
 
 def make_move(board, max_rows, max_cols, col, player):
     """Put player's piece in column COL of the board, if it is a valid move.
@@ -133,7 +163,9 @@ def make_move(board, max_rows, max_cols, col, player):
     >>> row
     -1
     """
-    "*** YOUR CODE HERE ***"
+    if col < 0 or col > max_cols:
+        return -1, board
+    return put_piece(board, max_rows, col, player)
 
 def print_board(board, max_rows, max_cols):
     """Prints the board. Row 0 is at the top, and column 0 at the far left.
@@ -148,7 +180,11 @@ def print_board(board, max_rows, max_cols):
     - -
     X -
     """
-    "*** YOUR CODE HERE ***"
+    for i in range(max_rows):
+        str=''
+        for j in range(max_cols):
+            str = str + get_piece(board, i, j) + ' '
+        print(str.strip())
 
 def check_win_row(board, max_rows, max_cols, num_connect, row, player):
     """ Returns True if the given player has a horizontal win
@@ -172,8 +208,37 @@ def check_win_row(board, max_rows, max_cols, num_connect, row, player):
     >>> check_win_row(board, rows, columns, num_connect, 3, 'O')   # We only detect wins for the given player
     False
     """
-    "*** YOUR CODE HERE ***"
+    row_lst = []
+    for j in range(max_cols):
+        row_lst.append(get_piece(board, row, j))
+    return is_num_continued(row_lst, num_connect, player)
 
+def is_num_continued(lst, num_connect, player):
+    """check if there are num_connect continued element 
+    as player in lst
+    >>> lst, num_connect, player = [1, 2, 3, 3, 3, 4, 5], 3, 3
+    True
+    """
+    num = 0
+    for element in lst:
+        if element == player:
+            num += 1
+        else:
+            num = 0
+        if num >= num_connect:
+            return True
+    return False
+    """
+    lst_len = len(lst)
+    left, right = 0, num_connect
+    while left < right and left < lst_len and right < lst_len:
+        left += 1
+        if lst[left] != player:
+            right += 1
+
+    return left == right and lst[left] == player
+    """
+    
 def check_win_column(board, max_rows, max_cols, num_connect, col, player):
     """ Returns True if the given player has a vertical win in the given column,
     and otherwise False.
@@ -197,8 +262,10 @@ def check_win_column(board, max_rows, max_cols, num_connect, col, player):
     >>> check_win_column(board, rows, columns, num_connect, 1, 'X')
     False
     """
-    "*** YOUR CODE HERE ***"
-
+    col_lst = []
+    for i in range(max_rows):
+        col_lst.append(get_piece(board, i, col))
+    return is_num_continued(col_lst, num_connect, player)
 def check_win(board, max_rows, max_cols, num_connect, row, col, player):
     """Returns True if the given player has any kind of win after placing a
     piece at (row, col), and False otherwise.
@@ -233,8 +300,11 @@ def check_win(board, max_rows, max_cols, num_connect, row, col, player):
     """
     diagonal_win = check_win_diagonal(board, max_rows, max_cols, num_connect,
                                       row, col, player)
-    "*** YOUR CODE HERE ***"
-
+    row_win = check_win_row(board, max_rows, max_cols, num_connect,
+                                      row, player)
+    col_win = check_win_column(board, max_rows, max_cols, num_connect,
+                                      col, player)
+    return diagonal_win or row_win or col_win
 ###############################################################
 ### Functions for reference when solving the other problems ###
 ###############################################################
