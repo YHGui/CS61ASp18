@@ -19,4 +19,11 @@ def vending_machine(snacks):
     >>> vender()
     'chocolate'
     """
-    "*** YOUR CODE HERE ***"
+    index = 0
+    len_snacks = len(snacks)
+    def vender():
+        nonlocal index
+        result = snacks[index]
+        index = (index + 1) % len_snacks
+        return result
+    return vender
