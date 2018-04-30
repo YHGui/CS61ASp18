@@ -517,14 +517,15 @@ def optimize_tail_calls(original_scheme_eval):
         else:
             result = Thunk(expr, env)
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        result = original_scheme_eval(expr, env, True)
+        return result
         # END
     return optimized_eval
 
 ################################################################
 # Uncomment the following line to apply tail call optimization #
 ################################################################
-# scheme_eval = optimize_tail_calls(scheme_eval)
+#scheme_eval = optimize_tail_calls(scheme_eval)
 
 
 ####################
